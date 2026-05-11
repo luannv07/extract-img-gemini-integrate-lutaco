@@ -41,8 +41,15 @@ genai.configure(api_key=geminiApiKey)
 app = FastAPI(
     title="Lutaco AI Bill Extractor",
     version="1.0.0",
-    description="AI OCR bill extraction service"
+    description="AI OCR bill extraction service",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
+
+@app.get("/")
+def root():
+    return {"message": "running"}
 
 security = HTTPBearer()
 
@@ -272,7 +279,7 @@ async def extractBill(
 
         imagePart = {
             "mime_type": file.content_type,
-            "data": base64.b64encode(content).decode("utf-8")
+            "data": content
         }
 
         response = model.generate_content([
@@ -316,6 +323,5 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host=host,
-        port=port,
-        reload=True
+        port=port
     )
